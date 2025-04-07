@@ -2,12 +2,16 @@
   "name": "codespaces-react",
   "version": "0.1.0",
   "private": true,
+  "proxy": "https://localhost:4000/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "axios": "^1.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router": "^7.3.0",
+    "react-router-dom": "^7.3.0",
     "web-vitals": "^3.1.0"
   },
   "overrides": {
@@ -16,7 +20,7 @@
     "postcss": "^8.4.31"
   },
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=0 vite --port 3000",
+    "start": "BROWSER=none WDS_SOCKET_PORT=0 vite --port 4000",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest"
