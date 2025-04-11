@@ -1,27 +1,50 @@
 import './App.css';
+import React, { useState, useEffect } from 'react';
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+import Home from "./components/Home.jsx";
+import Visualize from "./components/Visualize.jsx";
+import ChooseYourStory from "./components/ChooseYourStory.jsx";
+import OwnStory from "./components/OwnStory";
+import Final from './components/Final';
+import NavBar from './components/Navbar';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src="Octocat.png" className="App-logo" alt="logo" />
-        <p>
-          GitHub Codespaces <span className="heart">♥️</span> React
-        </p>
-        <p className="small">
-          Edit <code>src/App.jsx</code> and save to reload.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
-      </header>
+    <div>
+      <NavBar></NavBar>
+      <div class = "App">
+        <Router>
+          <Routes>
+            <Route 
+              path= "/"
+              element = {<Home></Home>}
+            />
+            <Route
+              path = "/visualize"
+              element = {<Visualize />}
+            />
+            <Route
+              path = "/chooseyourstory"
+              element = {<ChooseYourStory />}
+            />
+            <Route
+              path = "/ownstory"
+              element = {<OwnStory />}
+            />
+            <Route
+              path = "/final"
+              element = {<Final />}
+            />
+          </Routes>
+        </Router>
+      </div>
     </div>
   );
 }
