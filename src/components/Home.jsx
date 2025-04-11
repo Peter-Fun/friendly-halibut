@@ -10,7 +10,7 @@ function ButtonLink({to, children}){
 
 const Home = () => {
     return(
-        <div>
+        <div className={"border"}>
             <h1>Welcome to Visualize!</h1>
             <p>This app is intended to help readers visualize and immerse into stories better</p>
             <p>Click one of the options below for what you want to do!</p>

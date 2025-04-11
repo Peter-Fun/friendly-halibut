@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS, cross_origin
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
@@ -15,6 +15,10 @@ import base64
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
+image_interpreter = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
+saved_images = []
+#story_writer = pipeline("text-generation", model="microsoft/phi-1_5", trust_remote_code=True)
+#current_story = ""
 """@app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = 'https://friendly-halibut-qx9q94px5q7hg6w-3000.app.github.dev'
@@ -42,7 +46,7 @@ def grab_image():
   photos = api.get_entries()
   images = []
   for photo in photos:
-    response = requests.get(photo.large)
+    response = requests.get(photo.medium)
     image_bytes = response.content
 
     image_base64 = base64.b64encode(image_bytes).decode('utf-8')
@@ -51,6 +55,40 @@ def grab_image():
   print(response)
   response.headers.add("Access-Control-Allow-Origin", "*")
   return response
+
+@app.route("/visualize", methods=['POST'])
+def visualize_post():
+  image = request.args.get('image')
+  data = request.get_json()
+  image = data["image"]
+  image = Image.open(io.BytesIO(base64.b64decode(image)))
+  interpretation = image_interpreter(image)[0]["generated_text"]
+  #story = story_writer(current_story + interpretation)[0]["generated_text"][len(current_story):]
+  modified_image = add_text_to_image(image, interpretation)
+  buff = io.BytesIO()
+  modified_image.save(buff, format="JPEG")
+  image_base64 = base64.b64encode(buff.getvalue())
+  saved_images.append(image_base64)
+  #print(saved_images)
+  response = jsonify(message = "Success!")
+  response.headers.add("Access-Control-Allow-Origin", "*")
+  return response
+
+@app.route("/visualize", methods=['GET'])
+def visualize_get():
+    image_base64 = saved_images[-1] if saved_images else None
+    response = jsonify(message = {"image": image_base64.decode('utf-8')})
+    print(response, image_base64[:10])
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/final", methods=['GET'])
+def final():
+    pdf = generate_pdf(saved_images)
+    def generate():
+        for row in pdf:
+            yield row
+    return Response(generate(), mimetype='application/pdf')
 
 # add text below the picture book image
 def add_text_to_image(img, text):
@@ -91,8 +129,8 @@ def add_text_to_image(img, text):
         draw.text(text_position, line, font=font, fill="black")
         # move to next line
         y_position += line_height
-
     return new_img
+  
 # convert a list of images and compile into a pdf
 def generate_pdf(images):
     pdf = FPDF()

@@ -12,7 +12,7 @@ const Final = () => {
         <div>
             <h1>Final Product!</h1>
             <h2>Choose the Image You Want!</h2>
-            <button>Download when it works</button>
+            <button><a>Download when it works</a></button>
             <ButtonLink to="/">Do it again!</ButtonLink>
         </div>
     )
