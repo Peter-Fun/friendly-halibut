@@ -17,9 +17,11 @@ const Visualize = () => {
             </div>;
         }
         else{
+            setTimeout(VisualizedImage, 1000);
             return <div>
                 <p>Loading...</p>
             </div>;
+            
         }
     }
 
