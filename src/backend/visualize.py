@@ -20,7 +20,6 @@ saved_images = []
 analyzing = False
 #story_writer = pipeline("text-generation", model="microsoft/phi-1_5", trust_remote_code=True)
 #current_story = ""
-
 """@app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = 'https://friendly-halibut-qx9q94px5q7hg6w-3000.app.github.dev'
@@ -151,9 +150,7 @@ def add_text_to_image(img, text):
         # move to next line
         y_position += line_height
     return new_img
-
-
-
+  
 # convert a list of images and compile into a pdf
 def generate_pdf(images):
     pdf = FPDF()
