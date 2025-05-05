@@ -9,6 +9,38 @@ function ButtonLink({to, children}){
   }
 
 const OwnStory = () => {
+    const visualize = (e) => {
+        e.preventDefault();
+
+        const fileInput = document.querySelector('.file-input');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert("Please select a file first!");
+            return;
+        }
+        else{
+            // Encode the file using the FileReader API
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Use a regex to remove data url part
+                const base64String = reader.result
+                    .replace('data:', '')
+                    .replace(/^.+,/, '');
+                fetch("https://friendly-halibut-qx9q94px5q7hg6w-5000.app.github.dev/visualize", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        "image": base64String
+                    })
+                });
+                console.log(base64String);
+                // Logs wL2dvYWwgbW9yZ...
+            };
+            reader.readAsDataURL(file);
+        }
+    }
     return(
         <div>
             <ButtonLink to="/">Go Back Home</ButtonLink>
@@ -22,7 +54,9 @@ const OwnStory = () => {
                 </label>
                 <input type = "file" className = "file-input"/>
             </form>
-            <ButtonLink to="/visualize">Visualize!!!</ButtonLink>
+            <div onClick = {visualize}>
+                <ButtonLink to={"/Visualize"}>Visualize!!!</ButtonLink>
+            </div>
         </div>
     )
 

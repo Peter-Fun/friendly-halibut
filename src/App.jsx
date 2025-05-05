@@ -18,8 +18,8 @@ import NavBar from './components/Navbar';
 function App() {
   return (
     <div>
-      <NavBar></NavBar>
       <div class = "App">
+        <NavBar></NavBar>
         <Router>
           <Routes>
             <Route 
