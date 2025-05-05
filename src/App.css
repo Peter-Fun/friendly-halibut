@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   font-family: 'Roboto', Arial, sans-serif;
   color: #000000;
 }
@@ -158,11 +158,11 @@ button:hover {
 }
 
 .navBar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: start;
+  width: 100%;
   background-color: rgb(120, 201, 215);
   padding: 10px;
+  margin: 0px 0px 10px 0px;
 }
 
 .navBar a {

@@ -9,19 +9,39 @@ function ButtonLink({to, children}){
 const Visualize = () => {
     const [image, update_image] = useState("");
 
-    function Image(){
+    const [imageTag, update_imageTag] = useState(<div>
+        <p>Loading...</p>
+    </div>);
+
+    useEffect(() => {
         VisualizedImage();
+
+        const interval = setInterval(() => {
+            if (image != ""){
+                Image();
+                clearInterval(interval);
+            }
+            else{
+                VisualizedImage();
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [image]);
+    
+
+    function Image(){
+        //alert("cry me a " + image);
         if (image != ""){
-            return <div>
+            update_imageTag(<div>
                 <img src={`data:image/jpeg;base64,${image}`} alt="Visualized" />
-            </div>;
+            </div>);
+            return;
         }
         else{
-            setTimeout(VisualizedImage, 1000);
-            return <div>
+            update_imageTag(<div>
                 <p>Loading...</p>
-            </div>;
-            
+            </div>);
+            return;
         }
     }
 
@@ -44,7 +64,7 @@ const Visualize = () => {
         <div>
             <h1>Visualized!</h1>
             <h2>Here is your visualized image!</h2>
-            <Image />
+            {imageTag}
             <ButtonLink to="/">Continue the Story</ButtonLink>
             <br></br>
             <ButtonLink to="/final">I'm done!</ButtonLink>

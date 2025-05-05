@@ -68,6 +68,7 @@ def visualize_post():
   image = Image.open(io.BytesIO(base64.b64decode(image)))
   interpretation = image_interpreter(image)[0]["generated_text"]
   #story = story_writer(current_story + interpretation)[0]["generated_text"][len(current_story):]
+  print(interpretation)
   modified_image = add_text_to_image(image, interpretation)
   buff = io.BytesIO()
   modified_image.save(buff, format="JPEG")
