@@ -19,7 +19,7 @@ image_interpreter = pipeline("image-to-text", model="Salesforce/blip-image-capti
 saved_images = []
 analyzing = False
 #story_writer = pipeline("text-generation", model="microsoft/phi-1_5", trust_remote_code=True)
-#current_story = ""
+current_story = ""
 """@app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = 'https://friendly-halibut-qx9q94px5q7hg6w-3000.app.github.dev'
@@ -47,7 +47,7 @@ def grab_image():
   photos = api.get_entries()
   images = []
   for photo in photos:
-    response = requests.get(photo.medium)
+    response = requests.get(photo.large)
     image_bytes = response.content
 
     image_base64 = base64.b64encode(image_bytes).decode('utf-8')
@@ -60,6 +60,7 @@ def grab_image():
 @app.route("/visualize", methods=['POST'])
 def visualize_post():
   global analyzing
+  global current_story
   analyzing = True
   image = request.args.get('image')
   data = request.get_json()
@@ -67,13 +68,15 @@ def visualize_post():
   print(image)
   image = Image.open(io.BytesIO(base64.b64decode(image)))
   interpretation = image_interpreter(image)[0]["generated_text"]
-  #story = story_writer(current_story + interpretation)[0]["generated_text"][len(current_story):]
-  print(interpretation)
+  #story = story_writer(current_story + interpretation)[0]["generated_text"][len(current_story) + len(interpretation):]
+  #print(image, interpretation, story)
   modified_image = add_text_to_image(image, interpretation)
+  #modified_image = add_text_to_image(image, story)
   buff = io.BytesIO()
   modified_image.save(buff, format="JPEG")
   image_base64 = base64.b64encode(buff.getvalue())
   saved_images.append(image_base64)
+  #current_story += story
   #print(saved_images)
   response = jsonify(message = "Success!")
   response.headers.add("Access-Control-Allow-Origin", "*")
@@ -101,12 +104,23 @@ def final():
                     headers={"Content-Disposition": "attachment;filename=visualized_images.pdf"}
                     )
 
+@app.route("/imagelist", methods=['GET'])
+def imagelist():
+    global saved_images
+    if not saved_images:
+        response = jsonify(message = {"images": []})
+    else:
+        print(saved_images)
+        response = jsonify(message = {"images": [img.decode('utf-8') for img in saved_images]})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 @app.route("/clear", methods=['GET'])
 def clear():
     global saved_images
     saved_images = []
-    #global current_story
-    #current_story = ""
+    global current_story
+    current_story = ""
     response = jsonify(message = "Cleared!")
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
